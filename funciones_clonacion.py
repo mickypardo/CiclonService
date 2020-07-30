@@ -7,19 +7,14 @@ import time
 def obtener_origen(tipo_clonacion):
     base = os.getcwd()
 
-    if platform.system() == "Windows":
-        s_ = r"\\"
-    elif platform.system() == "Linux":
-        s_ = r"/"
-
     diccio_rutas = {
-        "mantenimiento": f"{s_}data{s_}ORDEN_MNTO{s_}Origen{s_}Plantilla_Mantenimiento.pdf",
-        "alcantarillado": f"{s_}data{s_}ORDEN_ALCANTARILLADO{s_}Origen{s_}Plantilla_Alcantarillado.pdf",
-        "fuentes": f"{s_}data{s_}ORDEN_FUENTE{s_}Origen{s_}Plantilla_Fuente.pdf",
-        "residuos cornella": f"{s_}data{s_}RESIDUOS{s_}Origen{s_}Plantilla_Res_Cornella.pdf",
-        "residuos hospitalet": f"{s_}data{s_}RESIDUOS{s_}Origen{s_}Plantilla_Res_Hospitalet.pdf",
-        "residuos santacoloma": f"{s_}data{s_}RESIDUOS{s_}Origen{s_}Plantilla_Res_SantaColoma.pdf",
-        "residuos recogidas": f"{s_}data{s_}ORDEN_MNTO{s_}Origen{s_}Plantilla_Res_Recogidas.pdf"
+        "mantenimiento": f"{s}data{s}ORDEN_MNTO{s}Origen{s}Plantilla_Mantenimiento.pdf",
+        "alcantarillado": f"{s}data{s}ORDEN_ALCANTARILLADO{s}Origen{s}Plantilla_Alcantarillado.pdf",
+        "fuentes": f"{s}data{s}ORDEN_FUENTE{s}Origen{s}Plantilla_Fuente.pdf",
+        "residuos cornella": f"{s}data{s}RESIDUOS{s}Origen{s}Plantilla_Res_Cornella.pdf",
+        "residuos hospitalet": f"{s}data{s}RESIDUOS{s}Origen{s}Plantilla_Res_Hospitalet.pdf",
+        "residuos santacoloma": f"{s}data{s}RESIDUOS{s}Origen{s}Plantilla_Res_SantaColoma.pdf",
+        "residuos recogidas": f"{s}data{s}ORDEN_MNTO{s}Origen{s}Plantilla_Res_Recogidas.pdf"
     }
 
     return base + diccio_rutas[tipo_clonacion]
@@ -27,11 +22,6 @@ def obtener_origen(tipo_clonacion):
 
 def obtener_destino(tipo_clonacion):
     base = os.getcwd()
-
-    if platform.system() == "Windows":
-        s = r"\\"
-    elif platform.system() == "Linux":
-        s = r"/"
 
     diccio_rutas = {
         "mantenimiento": f"{s}data{s}ORDEN_MNTO{s}Destino{s}",
@@ -76,7 +66,7 @@ def obtener_destino(tipo_clonacion):
         destino = (
                 destino +
                 time.strftime(
-                    f"{s}Semana_%W{s}MANT_{fecha_str}"
+                    f"{s}Semana_%W{s}MANT_{fecha_str}.pdf"
                 )
         )
 
@@ -84,7 +74,7 @@ def obtener_destino(tipo_clonacion):
         destino = (
                 destino +
                 time.strftime(
-                    f"{s}%m_{diccio_meses[hoy.strftime(f'%m')]}{s}ALCANT_{fecha_str}"
+                    f"{s}%m_{diccio_meses[hoy.strftime(f'%m')]}{s}ALCANT_{fecha_str}.pdf"
                 )
         )
 
@@ -151,9 +141,27 @@ def obtener_destino(tipo_clonacion):
 
     return base + destino
 
+# Prepara una cadena con únicamente los directorios
+def preparar_directorio(directorio_string):
+    directorios_ = directorio_string.split(f'{s}')
+    i = 1
+    directorio_destino = ""
+
+    while (i < len(directorios_) - 1):
+        directorio_destino = directorio_destino + (s + directorios_[i])
+        i += 1
+
+    return directorio_destino
 
 # Método que realiza la clonación de cualquier clase de plantilla
 def clonar_plantilla(tipo):
+    global s
+
+    if platform.system() == "Windows":
+        s = r"\\"
+    elif platform.system() == "Linux":
+        s = r"/"
+
     if tipo == 0:  # Clona mantenimiento
         tipo_clonacion = "mantenimiento"
     elif tipo == 1:  # Clona alcantarillado
@@ -171,5 +179,10 @@ def clonar_plantilla(tipo):
 
     origen = obtener_origen(tipo_clonacion)
     destino = obtener_destino(tipo_clonacion)
-    print(origen)
-    print(destino)
+
+    ruta_directorios = preparar_directorio(origen)
+    print(ruta_directorios)
+    os.makedirs(ruta_directorios, exist_ok=True)
+    ruta_directorios = preparar_directorio(destino)
+    print(ruta_directorios)
+    os.makedirs(ruta_directorios, exist_ok=True)
