@@ -1,7 +1,10 @@
 import os
+import shutil
 import platform
 from datetime import *
 import time
+from tkinter import filedialog
+from tkinter import messagebox
 
 
 def obtener_origen(tipo_clonacion):
@@ -141,21 +144,24 @@ def obtener_destino(tipo_clonacion):
 
     return base + destino
 
+
 # Prepara una cadena con únicamente los directorios
 def preparar_directorio(directorio_string):
     directorios_ = directorio_string.split(f'{s}')
     i = 1
     directorio_destino = ""
 
-    while (i < len(directorios_) - 1):
+    while i < len(directorios_) - 1:
         directorio_destino = directorio_destino + (s + directorios_[i])
         i += 1
 
     return directorio_destino
 
+
 # Método que realiza la clonación de cualquier clase de plantilla
 def clonar_plantilla(tipo):
     global s
+    tipo_clonacion = ""
 
     if platform.system() == "Windows":
         s = r"\\"
@@ -180,9 +186,27 @@ def clonar_plantilla(tipo):
     origen = obtener_origen(tipo_clonacion)
     destino = obtener_destino(tipo_clonacion)
 
+    # Se prepara la ruta de carpetas de origen
     ruta_directorios = preparar_directorio(origen)
     print(ruta_directorios)
     os.makedirs(ruta_directorios, exist_ok=True)
+
+    # Se comprueba que el archivo de origen existe, en caso contrario se localiza y se copia a ORIGEN.
+    if not os.path.exists(origen):
+        archivo_origen = filedialog.askopenfilename(
+            initialdir=os.getcwd(), title="Seleccione archivo de origen", filetypes=(('pdf files', '*.pdf'),)
+        )
+        print(archivo_origen)
+        shutil.copy(archivo_origen, origen)
+
+    # Se prepara la ruta de carpetas de destino
     ruta_directorios = preparar_directorio(destino)
     print(ruta_directorios)
     os.makedirs(ruta_directorios, exist_ok=True)
+
+    # Se comprueba que el archivo de destino existe, en caso contrario se localiza y se copia a DESTINO.
+    if not os.path.exists(destino):
+        shutil.copy(origen, destino)
+        messagebox.showinfo(title="Aviso", message="El archivo ha sido clonado correctamente.")
+    else:
+        messagebox.showwarning(title="Error", message="El archivo ya fue clonado.")
