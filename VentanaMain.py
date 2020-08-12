@@ -4,7 +4,6 @@ from funciones_clonacion import *
 
 
 class VentanaMain:
-
     def __init__(self, root, version):
         self.bg_color = "#2471a3"
         self.fg_color = "white"
@@ -14,7 +13,7 @@ class VentanaMain:
         self.bg_boton2 = "#2ec177"
         self.raiz = root
         self.raiz.title(
-            "CICLON-*** (Clonador Integrado de ***) Versión:{}".format(version)
+            f"CICLON-*** (Clonador Integrado de ***) Versión:{version}"
         )
         self.raiz.resizable(0, 0)
         self.raiz.config(bg=self.bg_color)
@@ -22,11 +21,12 @@ class VentanaMain:
         self.raiz.mainloop()
 
 
+
     def init_elementos(self):
         # Etiquetado principal
         etiq_init = Label(
             self.raiz,
-            text= "Seleccione uno de los botones " +
+            text="Seleccione uno de los botones " +
             "para realizar la clonación de plantillas:",
             bg=self.bg_color,
             fg=self.fg_color,
@@ -46,7 +46,7 @@ class VentanaMain:
         ).grid(row=1, column=0)
 
         # Boton para clonar plantilla de alcantarillado.
-        boton_alcatarillado = Button(
+        boton_alcantarillado = Button(
             self.raiz,
             text="ALCANTARILLADO",
             font=self.font_sec,

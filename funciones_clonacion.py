@@ -1,8 +1,9 @@
-import os
+import os, webbrowser
 import shutil
 import platform
 from datetime import *
 import time
+import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 
@@ -59,11 +60,18 @@ def obtener_destino(tipo_clonacion):
     un_dia = timedelta(days=1)
     fecha_str = hoy.strftime(f"%Y%m%d")
 
+    mes = int(hoy.strftime(f"%m"))
     hora = int(hoy.strftime(f"%H"))
+    minutos = int(hoy.strftime(f"%M"))
 
-    if hora < 8:
-        hoy = hoy - un_dia
-        fecha_str = hoy.strftime(f"%Y%m%d")
+    if 6 <= mes <= 9:
+        if hora < 8:
+            hoy = hoy - un_dia
+            fecha_str = hoy.strftime(f"%Y%m%d")
+    else:
+        if hora < 8 and minutos < 30:
+            hoy = hoy - un_dia
+            fecha_str = hoy.strftime(f"%Y%m%d")
 
     if tipo_clonacion == "mantenimiento":
         destino = (
@@ -208,5 +216,12 @@ def clonar_plantilla(tipo):
     if not os.path.exists(destino):
         shutil.copy(origen, destino)
         messagebox.showinfo(title="Aviso", message="El archivo ha sido clonado correctamente.")
+        abrir_carpeta = messagebox.askyesno(title="Pregunta", message="¿Quieres abrir la carpeta del archivo clonado?")
+        if abrir_carpeta:
+            if platform.system() == "Linux":
+                os.system(f'nautilus {os.path.realpath(ruta_directorios)}')
+            elif platform.system() == "Windows":
+                os.system(f'start {os.path.realpath(ruta_directorios)}')
+
     else:
         messagebox.showwarning(title="Error", message="El archivo ya fue clonado.")
