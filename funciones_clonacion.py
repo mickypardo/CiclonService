@@ -1,9 +1,8 @@
-import os, webbrowser
+import os
 import shutil
 import platform
 from datetime import *
 import time
-import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 
@@ -60,25 +59,36 @@ def obtener_destino(tipo_clonacion):
     un_dia = timedelta(days=1)
     fecha_str = hoy.strftime(f"%Y%m%d")
 
+    semana = int(hoy.strftime(f"%W")) + 1
+    print(semana)
     mes = int(hoy.strftime(f"%m"))
-    hora = int(hoy.strftime(f"%H"))
-    minutos = int(hoy.strftime(f"%M"))
+    hora = int(time.strftime(f"%H"))
+    print(hora)
+    minutos = int(time.strftime(f"%M"))
 
     if 6 <= mes <= 9:
         if hora < 8:
+            semana -= 1
+            print(semana)
             hoy = hoy - un_dia
             fecha_str = hoy.strftime(f"%Y%m%d")
     else:
         if hora < 8 and minutos < 30:
+            semana -= 1
+            print(semana)
             hoy = hoy - un_dia
             fecha_str = hoy.strftime(f"%Y%m%d")
 
     if tipo_clonacion == "mantenimiento":
+        if semana < 10:
+            semana_str = "0" + str(semana)
+        else:
+            semana_str = str(semana)
+
         destino = (
                 destino +
-                time.strftime(
-                    f"{s}Semana_%W{s}MANT_{fecha_str}.pdf"
-                )
+                f"{s}Semana_{semana_str}{s}MANT_{fecha_str}.pdf"
+
         )
 
     elif tipo_clonacion == "alcantarillado":
@@ -170,11 +180,7 @@ def preparar_directorio(directorio_string):
 def clonar_plantilla(tipo):
     global s
     tipo_clonacion = ""
-
-    if platform.system() == "Windows":
-        s = r"\\"
-    elif platform.system() == "Linux":
-        s = r"/"
+    s = os.sep
 
     if tipo == 0:  # Clona mantenimiento
         tipo_clonacion = "mantenimiento"

@@ -123,5 +123,5 @@ class VentanaMain:
 
 
 app = tk.Tk()
-ventana = VentanaMain(app, "1.02b")
+ventana = VentanaMain(app, "1.1a")
 app.mainloop()
